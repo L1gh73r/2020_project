@@ -4,21 +4,19 @@
 #include <list>
 #include <cmath>
 #include <ctime>
-#include <limits>
+#include <limits> //专门用于检测整型数据数据类型的表达值范围。
 #include <stdlib.h>
 #include<fstream>
-#include<sstream>
-#include<dirent.h>
-#include<vector>
+#include<sstream>//stringstream通常用来做数据转换
+#include<dirent.h>//文件夹操作函数。GCC，非ANSI C。 
+#include<vector>//vector是动态数组，在堆上vector比array更常用
 #include<sys/time.h>
 using namespace std;
 
 list<string> numList;
-
-void Initialize();
 string RanddomNum();
-int CountN(const string& guess, const string& str);
-int CountP(const string& guess, const string& str);
+int countnumbers(const string& guess, const string& str);
+int countpositions(const string& guess, const string& str);
 string GetNextGuess();
 int64_t getCurrentTime()      //直接调用这个函数就行了，返回值最好是int64_t，long long应该也可以
     {    
@@ -28,9 +26,20 @@ int64_t getCurrentTime()      //直接调用这个函数就行了，返回值最
     }    
 int main()
 {
-    
     int x = 1;
-    Initialize();   // 初始化
+    int n, p;    // 分别表示有几个数字猜对，有几个数字位置也对
+    char buf[5] = { 0 };
+    for (int i = '1'; i <= '9'; i++)
+        for (int j = '0'; j <= '9'; j++)
+            for (int k = '0'; k <= '9'; k++)
+                for (int l = '0'; l <= '9'; l++)
+                {
+                    buf[0] = i;
+                    buf[1] = j;
+                    buf[2] = k;
+                    buf[3] = l;
+                    numList.push_back(buf);
+                }   // 初始化
     //找到的文件的文件名
         string tmp;
         //for (vector<string> ::iterator a = zg.begin(); a != zg.end(); ++a)
@@ -49,7 +58,6 @@ int main()
     //   file.open("C:\\Users\\24657\\Desktop\\345.txt");
     //file << tmp << ":\n";
     string guess = "1234";//RanddomNum(); // 第1回合随机猜数
-    int n, p;    // 分别表示有几个数字猜对，有几个数字位置也对
     while (1)
     {   cout << "emmmmm...   " << guess << endl;
         //.open("C:\\Users\\24657\\Desktop\\result.txt")
@@ -66,12 +74,12 @@ int main()
         for (list<string>::iterator it = numList.begin();
             it != numList.end();)
         {
-            if (CountN(guess, *it) != n) // 如果没有n个数字对
+            if (countnumbers(guess, *it) != n) // 如果没有n个数字对
             {
                 it = numList.erase(it);  // 不可能是被猜数，筛掉
                 continue;
             }
-            if (CountP(guess, *it) != p) // 如果没有p个数字位置对
+            if (countpositions(guess, *it) != p) // 如果没有p个数字位置对
             {
                 it = numList.erase(it);  // 不可能是被猜数，筛掉
                 continue;
@@ -90,21 +98,6 @@ int main()
     
 }
 
-void Initialize()
-{
-    char buf[5] = { 0 };
-    for (int i = '1'; i <= '9'; i++)
-        for (int j = '0'; j <= '9'; j++)
-            for (int k = '0'; k <= '9'; k++)
-                for (int l = '0'; l <= '9'; l++)
-                {
-                    buf[0] = i;
-                    buf[1] = j;
-                    buf[2] = k;
-                    buf[3] = l;
-                    numList.push_back(buf);
-                }
-}
 
 string RanddomNum()
 {
@@ -114,7 +107,7 @@ string RanddomNum()
     sprintf(buf, "%d", i);
     return buf;
 }
-int CountN(const string& guess, const string& num)
+int countnumbers(const string& guess, const string& num)
 {
     string s = num;  // 复制num，用于下面避免重复匹配的操作
     int count = 0;
@@ -131,7 +124,7 @@ int CountN(const string& guess, const string& num)
 }
 
 
-int CountP(const string& guess, const string& str)
+int countpositions(const string& guess, const string& str)
 {
     int count = 0;
     for (int i = 0; i < 4; i++)
@@ -150,11 +143,11 @@ string GetNextGuess()
         for (list<string>::iterator it2 = numList.begin();
             it2 != numList.end(); ++it2)
         {
-            int x = CountN(*it, *it2);
+            int x = countnumbers(*it, *it2);
             if (x == 0)
                 a[0][0]++;    // 如果n=0，p一定=0
             else
-                a[x][CountP(*it, *it2)]++;
+                a[x][countpositions(*it, *it2)]++;
         }
         int sum = 0;
         for (int i = 0; i < 5; i++)
