@@ -134,7 +134,7 @@ int countpositions(const string& guess, const string& str)
 
 string GetNextGuess()
 {
-    int min = numeric_limits<int>::max();
+    int min = numeric_limits<int>::max();//numeric_limits<int>::max()返回编译器允许的int型整数最大值
     string guess;   // 猜这个数
     for (list<string>::iterator it = numList.begin();
         it != numList.end(); ++it)
