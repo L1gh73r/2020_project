@@ -134,30 +134,11 @@ int countpositions(const string& guess, const string& str)
 
 string GetNextGuess()
 {
-    int min = numeric_limits<int>::max();//numeric_limits<int>::max()返回编译器允许的int型整数最大值
     string guess;   // 猜这个数
     for (list<string>::iterator it = numList.begin();
         it != numList.end(); ++it)
     {
-        int a[5][5] = { 0 };
-        for (list<string>::iterator it2 = numList.begin();
-            it2 != numList.end(); ++it2)
-        {
-            int x = countnumbers(*it, *it2);
-            if (x == 0)
-                a[0][0]++;    // 如果n=0，p一定=0
-            else
-                a[x][countpositions(*it, *it2)]++;
-        }
-        int sum = 0;
-        for (int i = 0; i < 5; i++)
-            for (int j = 0; j <= i; j++) // 位置对的数字个数不会超过猜对的数字个数
-                sum += a[i][j] * a[i][j];
-        if (sum < min)
-        {
-            sum = min;
-            guess = *it;
-        }
+        guess=*it;
     }
     return guess;
 }
